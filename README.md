@@ -92,8 +92,8 @@ Contributions are welcome! If you have suggestions for improvements or new featu
 4. Push to the branch and open a Pull Request.
 
 ## 👤 Author
-Om Ramani
 
-GitHub: @pinocchio02
+**Om Ramani**
+* GitHub: [@pinocchio02](https://github.com/pinocchio02)
 
 Made with 🍿 and Python.
