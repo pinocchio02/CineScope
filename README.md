@@ -51,3 +51,49 @@ Follow these instructions to get the project running on your local machine.
 git clone [https://github.com/pinocchio02/CineScope.git](https://github.com/pinocchio02/CineScope.git)
 cd CineScope
 ```
+
+### 2. Backend Setup (Python API)
+Navigate to the root directory (or where `api.py` is located) and install dependencies.
+
+```bash
+# Create a virtual environment (optional but recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install required Python packages
+pip install fastapi uvicorn pandas numpy scikit-learn python-multipart
+
+# Start the API Server
+uvicorn api:app --reload --port 8000
+```
+The backend will be running at http://127.0.0.1:8000
+
+### 3. Frontend Setup (React)
+Open a new terminal and navigate to the frontend folder.
+
+```bash
+cd frontend
+
+# Install Node dependencies
+npm install
+
+# Start the Development Server
+npm run dev
+```
+The frontend will typically run at http://localhost:5173
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions for improvements or new features:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/NewFeature`).
+3. Commit your changes.
+4. Push to the branch and open a Pull Request.
+
+## 👤 Author
+Om Ramani
+
+GitHub: @pinocchio02
+
+Made with 🍿 and Python.
