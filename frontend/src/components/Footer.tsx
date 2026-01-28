@@ -48,7 +48,7 @@ export const Footer = () => {
 
                 {/* GitHub */}
                 <a
-                  href="https://github.com/pinocchio02"
+                  href="https://github.com/pinocchio02/CineScope"
                   target="_blank"
                   rel="noreferrer"
                   className="text-zinc-400 hover:text-white transition-colors"
