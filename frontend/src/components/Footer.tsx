@@ -2,7 +2,7 @@ import { Github, Twitter, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { LegalModal } from "@/components/LegalModal";
-import { Toast } from "@/components/ui/Toast"; // Import our new Toast
+import { Toast } from "@/components/ui/toast"; // Import our new Toast
 
 export const Footer = () => {
   // State for Legal Modal
