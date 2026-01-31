@@ -33,7 +33,7 @@ def load_data():
     print("Loading TMDB Dataset...")
     
     try:
-        df = pd.read_csv('tmdb_movies.csv')
+        df = pd.read_csv('movies_small.csv')
     except FileNotFoundError:
         print("ERROR: 'tmdb_movies.csv' not found. Please download it from Kaggle.")
         return
