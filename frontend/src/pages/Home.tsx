@@ -39,7 +39,7 @@ const Home = () => {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const response = await fetch("/https://cinescope22.vercel.app/home");
+        const response = await fetch("/app/home");
         if (response.ok) {
           const apiData = await response.json();
           const mappedData = apiData.map((category: any, index: number) => {
@@ -75,7 +75,7 @@ const Home = () => {
     if (searchQuery.length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetch(`/https://cinescope22.vercel.app/search?query=${searchQuery}`);
+        const response = await fetch(`/app/search?query=${searchQuery}`);
         if (response.ok) { const data = await response.json(); setSuggestions(data); setShowSuggestions(true); }
       } catch (error) { console.error(error); }
     }, 300);
@@ -109,7 +109,7 @@ const Home = () => {
     setIsSearchLoading(true); setHasSearched(true); setErrorMsg(null); setGridTitle(`Top ${genre} Movies`); setShowSuggestions(false);
     try {
       const params = new URLSearchParams({ genre: genre, min_year: releaseYear.toString(), min_rating: minRating.toString() });
-      const response = await fetch(`/https://cinescope22.vercel.app/discover?${params}`);
+      const response = await fetch(`/app/discover?${params}`);
       if (!response.ok) throw new Error("Failed to load genre movies.");
       const data = await response.json();
       if (data.length > 0) {
@@ -127,7 +127,7 @@ const Home = () => {
     if (overrideQuery) setSearchQuery(overrideQuery);
     try {
       const params = new URLSearchParams({ title: query, min_year: releaseYear.toString(), min_rating: minRating.toString() });
-      const response = await fetch(`/https://cinescope22.vercel.app/grecommend?${params}`);
+      const response = await fetch(`/app/grecommend?${params}`);
       if (!response.ok) { if (response.status === 404) throw new Error("Movie not found. Try exact spelling!"); throw new Error("Connection failed."); }
       const data = await response.json();
       setSourceMovie({ id: data.source.id, title: data.source.title, rating: data.source.rating, year: data.source.year, poster: data.source.poster, backdrop: data.source.backdrop, genres: data.source.genres, description: data.source.description });
