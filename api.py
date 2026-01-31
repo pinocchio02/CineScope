@@ -8,7 +8,7 @@ import re
 import numpy as np
 import ast
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 # --- CONFIGURATION ---
 TMDB_API_KEY = 'd8519ed507bbbe81a00f6a9715b045be'
