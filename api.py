@@ -120,11 +120,19 @@ def process_movie_row(row):
 
 @app.get("/home")
 def get_home_content():
+
+    print("Hello")
     global movies_df
     if movies_df is None: return []
 
     categories = []
     
+    # This shows in the Browser (good for testing connection)
+    return {
+        "debug_message": "Hello from the browser!", 
+        "data": categories
+    }
+
     def get_section(title, sort_by='weighted_score', genre=None, n=20):
         filtered = movies_df
         if genre:
