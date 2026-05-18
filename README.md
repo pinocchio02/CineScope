@@ -7,20 +7,23 @@
 
 **CineScope** is an end-to-end movie recommendation engine that combines a sleek, modern React frontend with a powerful Python-based machine learning backend. Designed with a cinema-first "Dark & Amber" aesthetic, it allows users to discover movies through personalized recommendations, advanced filtering, and smart search.
 
----
-
-## ✨ Features
-
-* **🤖 AI-Powered Recommendations:** Get "More like this" suggestions based on content similarity and genre analysis.
-* **🔍 Smart Search:** Real-time search with instant dropdown suggestions.
-* **🎛️ Advanced Filtering:** Filter movies by **Genre**, **Release Year**, and **Minimum Rating**.
-* **⚡ Modern UI/UX:** Fully responsive design with a "Netflix-style" Hero section, movie carousels, and smooth animations.
-* **🌓 Dark Mode Aesthetic:** Immersive yellow (#F59E0B) and black theme.
-* **📱 Interactive Details:** Click any movie to open a modal with full details, backdrops, and related titles.
+**Live site:** [cinescope22.vercel.app](https://cinescope22.vercel.app)  
+**API:** [cinescope-21yg.onrender.com](https://cinescope-21yg.onrender.com)
 
 ---
 
-## 🛠️ Tech Stack
+## Features
+
+* **AI-Powered Recommendations:** Get "More like this" suggestions based on content similarity and genre analysis.
+* **Smart Search:** Real-time search with instant dropdown suggestions.
+* **Advanced Filtering:** Filter movies by **Genre**, **Release Year**, and **Minimum Rating**.
+* **Modern UI/UX:** Fully responsive design with a "Netflix-style" Hero section, movie carousels, and smooth animations.
+* **Dark Mode Aesthetic:** Immersive yellow (#F59E0B) and black theme.
+* **Interactive Details:** Click any movie to open a modal with full details, backdrops, and related titles.
+
+---
+
+## Tech Stack
 
 ### **Frontend**
 * **Framework:** React 18 (Vite)
@@ -33,11 +36,11 @@
 * **API:** FastAPI (Python)
 * **Machine Learning:** Scikit-learn (Cosine Similarity / KNN)
 * **Data Processing:** Pandas, NumPy
-* **Dataset:** MovieLens (ml-latest-small)
+* **Dataset:** TMDB (`movies_small.csv`)
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these instructions to get the project running on your local machine.
 
@@ -48,7 +51,7 @@ Follow these instructions to get the project running on your local machine.
 
 ### **1. Clone the Repository**
 ```bash
-git clone [https://github.com/pinocchio02/CineScope.git](https://github.com/pinocchio02/CineScope.git)
+git clone https://github.com/pinocchio02/CineScope.git
 cd CineScope
 ```
 
@@ -61,7 +64,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install required Python packages
-pip install fastapi uvicorn pandas numpy scikit-learn python-multipart
+pip install -r requirements.txt
 
 # Start the API Server
 uvicorn api:app --reload --port 8000
@@ -84,14 +87,14 @@ The frontend runs at http://localhost:8080 (Vite proxies `/api` to the backend).
 
 ---
 
-## Production deployment (Vercel + Render or Railway)
+## Production deployment (Vercel + Render)
 
 The frontend and backend are deployed separately:
 
 | Part | Host | Notes |
 |------|------|--------|
 | React app | **Vercel** | Root directory: `frontend` |
-| FastAPI API | **Render** or **Railway** | Repo root (`api.py`, `movies_small.csv`) |
+| FastAPI API | **Render** | Repo root (`api.py`, `movies_small.csv`) |
 
 ### Step 1 — Deploy the API (Render)
 
@@ -103,17 +106,9 @@ The frontend and backend are deployed separately:
    - **Start command:** `uvicorn api:app --host 0.0.0.0 --port $PORT`
    - **Health check path:** `/health`
 5. Deploy. First boot loads the CSV and trains the model (1–3 minutes on free tier).
-6. Copy the service URL, e.g. `https://cinescope-api.onrender.com`.
+6. Your live API URL: `https://cinescope-21yg.onrender.com`
 
-**Render alternative:** use the included `render.yaml` (Blueprint deploy).
-
-### Step 1 (alt) — Deploy the API (Railway)
-
-1. [Railway](https://railway.app) → **New Project** → **Deploy from GitHub repo**.
-2. Set **Root Directory** to the repo root.
-3. Railway reads `railway.toml` / `Procfile` and starts `uvicorn`.
-4. Under **Variables**, optional: `DATA_CSV=movies_small.csv`, `MODEL_SIZE=20000`.
-5. Copy the public URL from **Settings → Networking → Generate Domain**.
+You can also use the included `render.yaml` for a Blueprint deploy.
 
 ### Step 2 — Point Vercel at the API
 
@@ -121,7 +116,7 @@ The frontend and backend are deployed separately:
 2. Add:
 
    ```
-   VITE_API_URL=https://YOUR-RENDER-OR-RAILWAY-URL.onrender.com
+   VITE_API_URL=https://cinescope-21yg.onrender.com
    ```
 
    No trailing slash. Apply to **Production** (and Preview if you want).
@@ -131,18 +126,18 @@ The frontend and backend are deployed separately:
 
 ### Step 3 — Verify
 
-- `https://YOUR-API-URL/health` → `{"status":"ok","movies_loaded":true,...}`
-- `https://YOUR-API-URL/home` → JSON with movie categories
-- Open your Vercel site → home rows, search, and genres should load.
+- `https://cinescope-21yg.onrender.com/health` → `{"status":"ok","movies_loaded":true,...}`
+- `https://cinescope-21yg.onrender.com/home` → JSON with movie categories
+- Open [cinescope22.vercel.app](https://cinescope22.vercel.app) → home rows, search, and genres should load.
 
 ### Notes
 
 - Do **not** use the old `vercel.json` rewrite to `api.py` — Python does not run on Vercel for this project.
-- Free Render/Railway instances **sleep** when idle; the first request after sleep can take 30–60+ seconds.
+- Free Render instances **sleep** when idle; the first request after sleep can take 30–60+ seconds.
 - `tmdb_movies.csv` (~576 MB) is too large for GitHub; use `movies_small.csv` or run `shrink_data.py` and commit the result.
-- For more RAM on small instances, lower `MODEL_SIZE` (e.g. `10000`) in Render/Railway env vars.
+- For more RAM on small instances, lower `MODEL_SIZE` (e.g. `10000`) in Render environment variables.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! If you have suggestions for improvements or new features:
 
@@ -151,7 +146,7 @@ Contributions are welcome! If you have suggestions for improvements or new featu
 3. Commit your changes.
 4. Push to the branch and open a Pull Request.
 
-## 👤 Author
+## Author
 
 **Om Ramani**
 * GitHub: [@pinocchio02](https://github.com/pinocchio02)
