@@ -8,7 +8,6 @@ export const featuredMovie: Movie = {
   rating: 8.7,
   year: 2024,
   genres: ["Sci-Fi", "Adventure", "Drama"],
-  description: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the known universe, he endeavors to prevent a terrible future only he can foresee.",
   overview: "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.",
   runtime: 166,
   director: "Denis Villeneuve",
@@ -24,7 +23,6 @@ export const movies: Movie[] = [
     rating: 8.5,
     year: 2023,
     genres: ["Drama", "History", "Thriller"],
-    description: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.",
     overview: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.",
   },
   {
@@ -36,7 +34,6 @@ export const movies: Movie[] = [
     rating: 8.0,
     year: 2023,
     genres: ["Sci-Fi", "Comedy", "Romance"],
-    description: "The incredible tale about the fantastical evolution of Bella Baxter.",
     overview: "The incredible tale about the fantastical evolution of Bella Baxter.",
   },
   {
@@ -48,7 +45,6 @@ export const movies: Movie[] = [
     rating: 7.9,
     year: 2023,
     genres: ["Comedy", "Drama"],
-    description: "A curmudgeonly instructor at a New England prep school remains on campus during Christmas break.",
     overview: "A curmudgeonly instructor at a New England prep school remains on campus during Christmas break.",
   },
   {
@@ -60,7 +56,6 @@ export const movies: Movie[] = [
     rating: 7.8,
     year: 2023,
     genres: ["Crime", "Drama", "History"],
-    description: "Members of the Osage tribe in the United States are murdered under mysterious circumstances in the 1920s.",
     overview: "Members of the Osage tribe in the United States are murdered under mysterious circumstances in the 1920s.",
   },
   {
@@ -72,7 +67,6 @@ export const movies: Movie[] = [
     rating: 8.1,
     year: 2023,
     genres: ["Drama", "Romance"],
-    description: "Two childhood friends are separated after one's family emigrates from South Korea.",
     overview: "Two childhood friends are separated after one's family emigrates from South Korea.",
   },
   {
@@ -84,7 +78,6 @@ export const movies: Movie[] = [
     rating: 7.4,
     year: 2023,
     genres: ["Drama", "History", "War"],
-    description: "The commandant of Auschwitz and his wife strive to build a dream life in a house beside the camp.",
     overview: "The commandant of Auschwitz and his wife strive to build a dream life in a house beside the camp.",
   },
   {
@@ -96,7 +89,6 @@ export const movies: Movie[] = [
     rating: 8.0,
     year: 2023,
     genres: ["Action", "Sci-Fi", "Drama"],
-    description: "Post-war Japan is at its lowest point when a new crisis emerges in the form of a giant monster.",
     overview: "Post-war Japan is at its lowest point when a new crisis emerges in the form of a giant monster.",
   },
   {
@@ -108,7 +100,6 @@ export const movies: Movie[] = [
     rating: 7.8,
     year: 2023,
     genres: ["Drama", "Thriller", "Mystery"],
-    description: "A woman is suspected of her husband's murder, and their blind son faces a moral dilemma as a witness.",
     overview: "A woman is suspected of her husband's murder, and their blind son faces a moral dilemma as a witness.",
   },
   {
@@ -120,7 +111,6 @@ export const movies: Movie[] = [
     rating: 7.0,
     year: 2023,
     genres: ["Comedy", "Adventure", "Fantasy"],
-    description: "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land.",
     overview: "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land.",
   },
   {
@@ -132,7 +122,6 @@ export const movies: Movie[] = [
     rating: 7.6,
     year: 2023,
     genres: ["Animation", "Fantasy", "Adventure"],
-    description: "A young boy named Mahito yearning for his mother ventures into a world shared by the living and the dead.",
     overview: "A young boy named Mahito yearning for his mother ventures into a world shared by the living and the dead.",
   },
   {
@@ -144,7 +133,6 @@ export const movies: Movie[] = [
     rating: 7.6,
     year: 2023,
     genres: ["Comedy", "Drama"],
-    description: "A novelist who's fed up with the establishment profiting from Black entertainment uses a pen name.",
     overview: "A novelist who's fed up with the establishment profiting from Black entertainment uses a pen name.",
   },
 ];
