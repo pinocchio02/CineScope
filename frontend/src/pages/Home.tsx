@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { Movie } from "@/types/movie";
 import { featuredMovie, allGenres, movieCategories as localCategories } from "@/data/movies";
 import { Button } from "@/components/ui/button";
+import { apiUrl } from "@/lib/api";
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,9 +40,25 @@ const Home = () => {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const response = await fetch("/api/home");
+        const response = await fetch(apiUrl("/home"));
         if (response.ok) {
           const apiData = await response.json();
+          if (!Array.isArray(apiData) || apiData.length === 0) {
+            console.warn("API returned no categories, using local data");
+            return;
+          }
+
+          const mapMovie = (item: any): Movie => ({
+            id: item.id ?? item.tmdbId,
+            title: item.title,
+            poster: item.poster ?? item.poster_url,
+            backdrop: item.backdrop ?? item.backdrop_url,
+            rating: item.rating,
+            year: item.year,
+            genres: Array.isArray(item.genres) ? item.genres : [],
+            overview: item.description ?? item.overview ?? "",
+          });
+
           const mappedData = apiData.map((category: any, index: number) => {
             let fixedId = category.id;
             let fixedTitle = category.title;
@@ -56,7 +73,11 @@ const Home = () => {
             else if (titleLower.includes("action")) fixedId = "action-adventure";
             else if (titleLower.includes("comedy")) fixedId = "comedy";
 
-            return { ...category, id: fixedId, title: fixedTitle };
+            return {
+              id: fixedId,
+              title: fixedTitle,
+              movies: (category.movies ?? []).map(mapMovie),
+            };
           });
           setHomeCategories(mappedData);
         } else {
@@ -75,7 +96,7 @@ const Home = () => {
     if (searchQuery.length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/search?query=${searchQuery}`);
+        const response = await fetch(apiUrl(`/search?query=${encodeURIComponent(searchQuery)}`));
         if (response.ok) { const data = await response.json(); setSuggestions(data); setShowSuggestions(true); }
       } catch (error) { console.error(error); }
     }, 300);
@@ -109,13 +130,13 @@ const Home = () => {
     setIsSearchLoading(true); setHasSearched(true); setErrorMsg(null); setGridTitle(`Top ${genre} Movies`); setShowSuggestions(false);
     try {
       const params = new URLSearchParams({ genre: genre, min_year: releaseYear.toString(), min_rating: minRating.toString() });
-      const response = await fetch(`/api/discover?${params}`);
+      const response = await fetch(apiUrl(`/discover?${params}`));
       if (!response.ok) throw new Error("Failed to load genre movies.");
       const data = await response.json();
       if (data.length > 0) {
         const heroData = data[0];
-        setSourceMovie({ id: heroData.tmdbId, title: heroData.title, rating: heroData.rating, year: heroData.year, poster: heroData.poster_url, backdrop: heroData.backdrop_url, genres: heroData.genres, description: heroData.description });
-        setApiRecommendations(data.slice(1).map((item: any) => ({ id: item.tmdbId, title: item.title, rating: item.rating, year: item.year, poster: item.poster_url, backdrop: item.backdrop_url, genres: [genre], description: item.description })));
+        setSourceMovie({ id: heroData.tmdbId, title: heroData.title, rating: heroData.rating, year: heroData.year, poster: heroData.poster_url, backdrop: heroData.backdrop_url, genres: heroData.genres, overview: heroData.description ?? heroData.overview ?? "" });
+        setApiRecommendations(data.slice(1).map((item: any) => ({ id: item.tmdbId, title: item.title, rating: item.rating, year: item.year, poster: item.poster_url, backdrop: item.backdrop_url, genres: [genre], overview: item.description ?? item.overview ?? "" })));
       } else { setErrorMsg("No movies found for this filter."); }
     } catch (error) { console.error(error); setErrorMsg("Could not load movies."); } finally { setIsSearchLoading(false); }
   };
@@ -127,11 +148,22 @@ const Home = () => {
     if (overrideQuery) setSearchQuery(overrideQuery);
     try {
       const params = new URLSearchParams({ title: query, min_year: releaseYear.toString(), min_rating: minRating.toString() });
-      const response = await fetch(`/api/grecommend?${params}`);
+      const response = await fetch(apiUrl(`/recommend?${params}`));
       if (!response.ok) { if (response.status === 404) throw new Error("Movie not found. Try exact spelling!"); throw new Error("Connection failed."); }
       const data = await response.json();
-      setSourceMovie({ id: data.source.id, title: data.source.title, rating: data.source.rating, year: data.source.year, poster: data.source.poster, backdrop: data.source.backdrop, genres: data.source.genres, description: data.source.description });
-      setApiRecommendations(data.recommendations.map((item: any) => ({ id: item.tmdbId, title: item.title, rating: item.rating, year: item.year, poster: item.poster_url, backdrop: item.backdrop_url, genres: item.genres, description: item.description })));
+      setSourceMovie({ id: data.source.id, title: data.source.title, rating: data.source.rating, year: data.source.year, poster: data.source.poster, backdrop: data.source.backdrop, genres: data.source.genres, overview: data.source.description ?? data.source.overview ?? "" });
+      setApiRecommendations(
+        data.recommendations.map((item: any) => ({
+          id: item.tmdbId,
+          title: item.title,
+          rating: item.rating,
+          year: item.year,
+          poster: item.poster_url,
+          backdrop: item.backdrop_url,
+          genres: item.genres,
+          overview: item.description ?? item.overview ?? "",
+        }))
+      );
       setGridTitle(`More like "${data.source.title}"`);
     } catch (error) { setErrorMsg((error as Error).message); setSourceMovie(null); setApiRecommendations([]); } finally { setIsSearchLoading(false); }
   };

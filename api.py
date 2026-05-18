@@ -1,14 +1,17 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-import requests
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
+from sklearn.neighbors import NearestNeighbors
 import re
 import numpy as np
 import ast
+import os
 
-app = FastAPI(root_path="/api")
+app = FastAPI()
+
+DATA_CSV = os.getenv("DATA_CSV", "movies_small.csv")
+MODEL_SIZE = int(os.getenv("MODEL_SIZE", "20000"))
 
 # --- CONFIGURATION ---
 TMDB_API_KEY = 'd8519ed507bbbe81a00f6a9715b045be'
@@ -25,17 +28,18 @@ app.add_middleware(
 
 # --- GLOBAL DATA ---
 movies_df = None
-cosine_sim = None
+tfidf_matrix = None
+nn_model = None
 
 @app.on_event("startup")
 def load_data():
-    global movies_df, cosine_sim
+    global movies_df, tfidf_matrix, nn_model
     print("Loading TMDB Dataset...")
     
     try:
-        df = pd.read_csv('movies_small.csv')
+        df = pd.read_csv(DATA_CSV)
     except FileNotFoundError:
-        print("ERROR: 'tmdb_movies.csv' not found. Please download it from Kaggle.")
+        print(f"ERROR: '{DATA_CSV}' not found. Run shrink_data.py or set DATA_CSV.")
         return
 
     # 1. CLEANING
@@ -69,15 +73,16 @@ def load_data():
         return (v/(v+m) * R) + (m/(v+m) * C)
     df['weighted_score'] = df.apply(weighted_rating, axis=1)
     
-    # 4. TRAIN MODEL (Top 20k)
-    df_small = df.sort_values('vote_count', ascending=False).head(20000).reset_index(drop=True)
+    # 4. TRAIN MODEL (top N by popularity; keep MODEL_SIZE moderate for RAM on free tiers)
+    df_small = df.sort_values('vote_count', ascending=False).head(MODEL_SIZE).reset_index(drop=True)
     
     tfidf = TfidfVectorizer(stop_words='english')
     tfidf_matrix = tfidf.fit_transform(df_small['overview'].fillna(''))
-    cosine_sim_matrix = linear_kernel(tfidf_matrix, tfidf_matrix)
-    
+    # Nearest-neighbors avoids building a 20k×20k dense similarity matrix (~3 GB RAM)
+    nn_model = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=31)
+    nn_model.fit(tfidf_matrix)
+
     movies_df = df_small
-    cosine_sim = cosine_sim_matrix
     print("Data Loaded & Model Trained!")
 
 # --- HELPER ---
@@ -118,6 +123,14 @@ def process_movie_row(row):
 
 # --- ENDPOINTS ---
 
+@app.get("/health")
+def health():
+    return {
+        "status": "ok" if movies_df is not None else "loading",
+        "movies_loaded": movies_df is not None,
+        "movie_count": len(movies_df) if movies_df is not None else 0,
+    }
+
 @app.get("/home")
 def get_home_content():
 
@@ -126,12 +139,6 @@ def get_home_content():
     if movies_df is None: return []
 
     categories = []
-    
-    # This shows in the Browser (good for testing connection)
-    return {
-        "debug_message": "Hello from the browser!", 
-        "data": categories
-    }
 
     def get_section(title, sort_by='weighted_score', genre=None, n=20):
         filtered = movies_df
@@ -193,7 +200,7 @@ def discover_movies(genre: str = None, min_year: int = 1900, min_rating: float =
 # --- REVISED RECOMMENDATION LOGIC (Now Respects Filters) ---
 @app.get("/recommend")
 def get_recommendations(title: str, min_year: int = 1900, min_rating: float = 0.0):
-    global movies_df, cosine_sim
+    global movies_df, tfidf_matrix, nn_model
     
     # 1. FIND SOURCE MOVIE
     def clean_text(text): return re.sub(r'[^a-zA-Z0-9 ]', '', str(text)).lower()
@@ -215,14 +222,11 @@ def get_recommendations(title: str, min_year: int = 1900, min_rating: float = 0.
     
     # A) AI Recommendations (Plot Similarity)
     try:
-        sim_scores = list(enumerate(cosine_sim[idx]))
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        # Get top 30 to have enough buffer for filtering
-        sim_scores = sim_scores[1:31] 
-        movie_indices = [i[0] for i in sim_scores]
+        _, neighbor_idx = nn_model.kneighbors(tfidf_matrix[idx], n_neighbors=31)
+        movie_indices = neighbor_idx[0][1:]  # skip self (index 0)
         ai_recs = movies_df.iloc[movie_indices].copy()
         candidates = pd.concat([candidates, ai_recs])
-    except:
+    except Exception:
         pass
 
     # B) Title Match Recommendations (e.g. Sequels/Prequels)

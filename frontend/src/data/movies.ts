@@ -149,12 +149,15 @@ export const movies: Movie[] = [
   },
 ];
 
+const byGenre = (...genres: string[]) =>
+  movies.filter((m) => m.genres.some((g) => genres.includes(g)));
+
 export const movieCategories: MovieCategory[] = [
-  { id: "sci-fi", title: "Sci-Fi & Fantasy", movies: [] },
-  { id: "top-rated", title: "Top Rated Gems", movies: [] },
-  { id: "romance-drama", title: "Romance & Drama", movies: [] },
-  { id: "action-adventure", title: "Action & Adventure", movies: [] },
-  { id: "comedy", title: "Comedy Hits", movies: [] },
+  { id: "sci-fi", title: "Sci-Fi & Fantasy", movies: byGenre("Sci-Fi", "Fantasy", "Animation") },
+  { id: "top-rated", title: "Top Rated Gems", movies: [...movies].sort((a, b) => b.rating - a.rating) },
+  { id: "romance-drama", title: "Romance & Drama", movies: byGenre("Romance", "Drama") },
+  { id: "action-adventure", title: "Action & Adventure", movies: byGenre("Action", "Adventure") },
+  { id: "comedy", title: "Comedy Hits", movies: byGenre("Comedy") },
 ];
 
 export const allGenres = [

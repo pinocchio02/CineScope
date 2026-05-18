@@ -1,0 +1,17 @@
+# Render Blueprint: deploy from repo root (where api.py and movies_small.csv live)
+# Dashboard: New → Blueprint → connect this repo
+services:
+  - type: web
+    name: cinescope-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.10.12"
+      - key: DATA_CSV
+        value: movies_small.csv
+      - key: MODEL_SIZE
+        value: "20000"

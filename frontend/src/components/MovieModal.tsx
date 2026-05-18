@@ -101,7 +101,7 @@ export const MovieModal = ({ movie, isOpen, onClose }: MovieModalProps) => {
                4. drop-shadow-lg: Stronger shadow to make text pop off the background.
             */}
             <p className="text-zinc-100 text-base md:text-lg font-medium leading-relaxed mb-8 max-w-2xl drop-shadow-lg max-h-[150px] md:max-h-[200px] overflow-y-auto pr-4 custom-scrollbar">
-                {movie.description || "No description available."}
+                {movie.overview || "No description available."}
             </p>
 
             {/* Buttons */}

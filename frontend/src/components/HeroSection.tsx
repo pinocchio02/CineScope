@@ -111,7 +111,7 @@ export const HeroSection = ({ movie, onMovieClick, isSlideShow = false }: HeroSe
           </div>
 
           <p className="text-lg text-gray-200 line-clamp-3 leading-relaxed drop-shadow-md max-w-2xl">
-            {currentMovie.description || currentMovie.overview || "No description available."}
+            {currentMovie.overview || "No description available."}
           </p>
 
           <div className="flex gap-4 pt-4">
