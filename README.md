@@ -134,7 +134,6 @@ You can also use the included `render.yaml` for a Blueprint deploy.
 
 - Do **not** use the old `vercel.json` rewrite to `api.py` — Python does not run on Vercel for this project.
 - Free Render instances **sleep** when idle; the first request after sleep can take 30–60+ seconds.
-- `tmdb_movies.csv` (~576 MB) is too large for GitHub; use `movies_small.csv` or run `shrink_data.py` and commit the result.
 - For more RAM on small instances, lower `MODEL_SIZE` (e.g. `10000`) in Render environment variables.
 
 ## Contributing
